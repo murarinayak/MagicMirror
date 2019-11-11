@@ -13,18 +13,19 @@ var translations = {
 	"fr" : "translations/fr.json", // French
 	"fy" : "translations/fy.json", // Frysk
 	"es" : "translations/es.json", // Spanish
+	"ca" : "translations/ca.json", // Catalan
 	"nb" : "translations/nb.json", // Norsk bokmål
 	"nn" : "translations/nn.json", // Norsk nynorsk
 	"pt" : "translations/pt.json", // Português
-	"pt_br" : "translations/pt_br.json", // Português Brasileiro
+	"pt-br" : "translations/pt-br.json", // Português Brasileiro
 	"sv" : "translations/sv.json", // Svenska
 	"id" : "translations/id.json", // Indonesian
 	"it" : "translations/it.json", // Italian
-	"zh_cn" : "translations/zh_cn.json", // Simplified Chinese
-	"zh_tw" : "translations/zh_tw.json", // Traditional Chinese
+	"zh-cn" : "translations/zh-cn.json", // Simplified Chinese
+	"zh-tw" : "translations/zh-tw.json", // Traditional Chinese
 	"ja" : "translations/ja.json", // Japanese
 	"pl" : "translations/pl.json", // Polish
-	"gr" : "translations/gr.json",  // Greek
+	"gr" : "translations/gr.json", // Greek
 	"da" : "translations/da.json", // Danish
 	"tr" : "translations/tr.json", // Turkish
 	"ru" : "translations/ru.json", // Russian
@@ -34,6 +35,14 @@ var translations = {
 	"et" : "translations/et.json", // Estonian
 	"kr" : "translations/kr.json", // Korean
 	"ro" : "translations/ro.json", // Romanian
+	"cy" : "translations/cy.json", // Welsh (Cymraeg)
+	"bg" : "translations/bg.json",  // Bulgarian
+	"cs" : "translations/cs.json",  // Czech
+	"hr" : "translations/hr.json", // Croatian
+	"sk" : "translations/sk.json",  // Slovak
+	"tlh" : "translations/tlh.json", // Klingon
+	"ms-my" : "translations/ms-my.json" // Malay
 };
 
 if (typeof module !== "undefined") {module.exports = translations;}
+

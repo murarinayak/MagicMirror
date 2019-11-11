@@ -18,7 +18,7 @@ var Translator = (function() {
 		xhr.overrideMimeType("application/json");
 		xhr.open("GET", file, true);
 		xhr.onreadystatechange = function () {
-			if (xhr.readyState == 4 && xhr.status == "200") {
+			if (xhr.readyState === 4 && xhr.status === 200) {
 				callback(JSON.parse(stripComments(xhr.responseText)));
 			}
 		};
@@ -126,6 +126,9 @@ var Translator = (function() {
 			// variables: {timeToWait: "2 hours", work: "painting"}
 			// to: "Please wait for 2 hours before continuing with painting."
 			function createStringFromTemplate(template, variables) {
+				if(Object.prototype.toString.call(template) !== "[object String]") {
+					return template;
+				}
 				if(variables.fallback && !template.match(new RegExp("\{.+\}"))) {
 					template = variables.fallback;
 				}
@@ -156,11 +159,13 @@ var Translator = (function() {
 
 			return key;
 		},
-		/* load(module, file, callback)
+
+		/* load(module, file, isFallback, callback)
 		 * Load a translation file (json) and remember the data.
 		 *
 		 * argument module Module - The module to load the translation file for.
 		 * argument file string - Path of the file we want to load.
+		 * argument isFallback boolean - Flag to indicate fallback translations.
 		 * argument callback function - Function called when done.
 		 */
 		load: function(module, file, isFallback, callback) {
@@ -216,10 +221,12 @@ var Translator = (function() {
 			// defined translation after the following line.
 			for (var first in translations) {break;}
 
-			Log.log("Loading core translation fallback file: " + translations[first]);
-			loadJSON(translations[first], function(translations) {
-				self.coreTranslationsFallback = translations;
-			});
+			if (first) {
+				Log.log("Loading core translation fallback file: " + translations[first]);
+				loadJSON(translations[first], function(translations) {
+					self.coreTranslationsFallback = translations;
+				});
+			}
 		},
 	};
 })();

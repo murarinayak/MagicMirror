@@ -1,34 +1,53 @@
-const globalSetup = require("./global-setup");
-const app = globalSetup.app;
+const helpers = require("./global-setup");
 const request = require("request");
-const chai = require("chai");
-const expect = chai.expect;
+const expect = require("chai").expect;
 
+const describe = global.describe;
+const it = global.it;
+const before = global.before;
+const after = global.after;
+const mlog = require("mocha-logger");
 
 describe("Vendors", function () {
 
-	this.timeout(20000);
+	helpers.setupTimeout(this);
 
-	beforeEach(function (done) {
-		app.start().then(function() { done(); } );
+	var app = null;
+
+	before(function () {
+		return helpers.startApplication({
+			args: ["js/electron.js"]
+		}).then(function (startedApp) { app = startedApp; });
 	});
 
-	afterEach(function (done) {
-		app.stop().then(function() { done(); });
+	after(function () {
+		return helpers.stopApplication(app);
 	});
 
 	describe("Get list vendors", function () {
 
-		before(function() {
+		before(function () {
 			process.env.MM_CONFIG_FILE = "tests/configs/env.js";
 		});
 
 		var vendors = require(__dirname + "/../../vendor/vendor.js");
 		Object.keys(vendors).forEach(vendor => {
-			it(`should return 200 HTTP code for vendor "${vendor}"`, function() {
+			it(`should return 200 HTTP code for vendor "${vendor}"`, function () {
 				urlVendor = "http://localhost:8080/vendor/" + vendors[vendor];
 				request.get(urlVendor, function (err, res, body) {
 					expect(res.statusCode).to.equal(200);
+				});
+			});
+		});
+
+		Object.keys(vendors).forEach(vendor => {
+			it(`should return 404 HTTP code for vendor https://localhost/"${vendor}"`, function() {
+				urlVendor = "http://localhost:8080/" + vendors[vendor];
+				request.get(urlVendor, function (err, res, body) {
+					if (!err)
+						expect(res.statusCode).to.equal(404);
+					else
+						mlog.pending(`There error vendor 404 test ${err}`);
 				});
 			});
 		});

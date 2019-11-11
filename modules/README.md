@@ -2,6 +2,42 @@
 
 This document describes the way to develop your own MagicMirror² modules.
 
+Table of Contents:
+
+- Module structure
+  - Files
+
+- The Core module file: modulename.js
+  - Available module instance properties
+  - Subclassable module methods
+  - Module instance methods
+  - Visibility locking
+
+- The Node Helper: node_helper.js
+  - Available module instance properties
+  - Subclassable module methods
+  - Module instance methods
+  
+- MagicMirror Helper Methods
+  - Module Selection
+
+- MagicMirror Logger
+
+---
+
+
+## General Advice
+
+As MagicMirror has gained huge popularity, so has the number of available modules. For new users and developers alike, it is very time consuming to navigate around the various repositories in order to find out what exactly a certain modules does, how it looks and what it depends on. Unfortunately, this information is rarely available, nor easily obtained without having to install it first. 
+Therefore **we highly recommend you to include the following information in your README file.**
+
+- A high quality screenshot of your working module
+- A short, one sentence, clear description what it does (duh!)
+- What external API's it depends upon, including web links to those
+- Whether the API/request require a key and the user limitations of those. (Is it free?)
+
+Surely this also help you get better recognition and feedback for your work. 
+
 ## Module structure
 
 All modules are loaded in the `modules` folder. The default modules are grouped together in the `modules/default` folder. Your module should be placed in a subfolder of `modules`. Note that any file or folder your create in the `modules` folder will be ignored by git, allowing you to upgrade the MagicMirror² without the loss of your files.
@@ -10,11 +46,11 @@ A module can be placed in one single folder. Or multiple modules can be grouped 
 
 ### Files
 - **modulename/modulename.js** - This is your core module script.
-- **modulename/node_helper.js** - This is an optional helper that will be loaded by the node script. The node helper and module script can communicate with each other using an intergrated socket system.
-- **modulename/public** - Any files in this folder can be accesed via the browser on `/modulename/filename.ext`.
+- **modulename/node_helper.js** - This is an optional helper that will be loaded by the node script. The node helper and module script can communicate with each other using an integrated socket system.
+- **modulename/public** - Any files in this folder can be accessed via the browser on `/modulename/filename.ext`.
 - **modulename/anyfileorfolder** Any other file or folder in the module folder can be used by the core module script. For example: *modulename/css/modulename.css* would be a good path for your additional module styles.
 
-## Core module file: modulename.js
+## The Core module file: modulename.js
 This is the script in which the module will be defined. This script is required in order for the module to be used. In it's most simple form, the core module file must contain:
 ````javascript
 Module.register("modulename",{});
@@ -44,30 +80,16 @@ As you can see, the `Module.register()` method takes two arguments: the name of 
 ### Available module instance properties
 After the module is initialized, the module instance has a few available module properties:
 
-#### `this.name`
-**String**
+| Instance Property | Type | Description |
+|:----------------- |:---- |:----------- |
+| `this.name` | String | The name of the module. |
+| `this.identifier` | String | This is a unique identifier for the module instance. |
+| `this.hidden` | Boolean | This represents if the module is currently hidden (faded away). |
+| `this.config` | Boolean | The configuration of the module instance as set in the user's `config.js` file. This config will also contain the module's defaults if these properties are not over-written by the user config. |
+| `this.data` | Object | The data object contain additional metadata about the module instance. (See below) |
 
-The name of the module.
 
-#### `this.identifier`
-**String**
-
-This is a unique identifier for the module instance.
-
-#### `this.hidden`
-**Boolean**
-
-This represents if the module is currently hidden (faded away).
-
-#### `this.config`
-**Boolean**
-
-The configuration of the module instance as set in the user's config.js file. This config will also contain the module's defaults if these properties are not over written by the user config.
-
-#### `this.data`
-**Object**
-
-The data object contains additional metadata about the module instance:
+The `this.data` data object contain the following metadata:
 - `data.classes` - The classes which are added to the module dom wrapper.
 - `data.file` - The filename of the core module file.
 - `data.path` - The path of the module folder.
@@ -76,7 +98,7 @@ The data object contains additional metadata about the module instance:
 
 
 #### `defaults: {}`
-Any properties defined in the defaults object, will be merged with the module config as defined in the user's config.js file. This is the best place to set your modules's configuration defaults. Any of the module configuration properties can be accessed using `this.config.propertyName`, but more about that later.
+Any properties defined in the defaults object, will be merged with the module config as defined in the user's config.js file. This is the best place to set your modules' configuration defaults. Any of the module configuration properties can be accessed using `this.config.propertyName`, but more about that later.
 
 #### `requiresVersion:`
 
@@ -112,7 +134,7 @@ loaded: function(callback) {
 ````
 
 #### `start()`
-This method is called when all modules are loaded an the system is ready to boot up. Keep in mind that the dom object for the module is not yet created. The start method is a perfect place to define any additional module properties:
+This method is called when all modules are loaded and the system is ready to boot up. Keep in mind that the dom object for the module is not yet created. The start method is a perfect place to define any additional module properties:
 
 **Example:**
 ````javascript
@@ -139,7 +161,7 @@ getScripts: function() {
 }
 
 ````
-**Note:** If a file can not be loaded, the boot up of the mirror will stall. Therefore it's advised not to use any external urls.
+**Note:** If a file can not be loaded, the boot up of the mirror will stall. Therefore, it's advised not to use any external urls.
 
 
 #### `getStyles()`
@@ -152,14 +174,14 @@ The getStyles method is called to request any additional stylesheets that need t
 getStyles: function() {
 	return [
 		'script.css', // will try to load it from the vendor folder, otherwise it will load is from the module folder.
-		'font-awesome.css', // this file is available in the vendor folder, so it doesn't need to be avialable in the module folder.
+		'font-awesome.css', // this file is available in the vendor folder, so it doesn't need to be available in the module folder.
 		this.file('anotherfile.css'), // this file will be loaded straight from the module folder.
 		'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',  // this file will be loaded from the bootstrapcdn servers.
 	]
 }
 
 ````
-**Note:** If a file can not be loaded, the boot up of the mirror will stall. Therefore it's advised not to use any external urls.
+**Note:** If a file can not be loaded, the boot up of the mirror will stall. Therefore, it's advised not to use any external URLs.
 
 #### `getTranslations()`
 **Should return: Dictionary**
@@ -217,7 +239,7 @@ That MagicMirror core has the ability to send notifications to modules. Or even 
 
 - `notification` - String - The notification identifier.
 - `payload` - AnyType - The payload of a notification.
-- `sender` - Module - The sender of the notification. If this argument is `undefined`, the sender of the notififiction is the core system.
+- `sender` - Module - The sender of the notification. If this argument is `undefined`, the sender of the notification is the core system.
 
 **Example:**
 ````javascript
@@ -230,11 +252,12 @@ notificationReceived: function(notification, payload, sender) {
 }
 ````
 
-**Note:** the system sends two notifications when starting up. These notifications could come in handy!
+**Note:** the system sends three notifications when starting up. These notifications could come in handy!
 
 
 - `ALL_MODULES_STARTED` - All modules are started. You can now send notifications to other modules.
 - `DOM_OBJECTS_CREATED` - All dom objects are created. The system is now ready to perform visual changes.
+- `MODULE_DOM_CREATED` - This module's dom has been fully loaded. You can now access your module's dom objects.
 
 
 #### `socketNotificationReceived: function(notification, payload)`
@@ -244,7 +267,7 @@ When using a node_helper, the node helper can send your module notifications. Wh
 - `payload` - AnyType - The payload of a notification.
 
 **Note 1:** When a node helper sends a notification, all modules of that module type receive the same notifications. <br>
-**Note 2:** The socket connection is established as soon as the module sends its first message using [sendSocketNotification](thissendsocketnotificationnotification-payload).
+**Note 2:** The socket connection is established as soon as the module sends its first message using [sendSocketNotification](#thissendsocketnotificationnotification-payload).
 
 **Example:**
 ````javascript
@@ -323,7 +346,7 @@ Possible configurable options:
 - `lockString` - String - When setting lock string, the module can not be shown without passing the correct lockstring. This way (multiple) modules can prevent a module from showing. It's considered best practice to use your modules identifier as the locksString: `this.identifier`. See *visibility locking* below.
 
 
-**Note 1:** If the hide animation is canceled, for instance because the show method is called before the hide animation was finished, the callback will not be called.<br>
+**Note 1:** If the hide animation is cancelled, for instance because the show method is called before the hide animation was finished, the callback will not be called.<br>
 **Note 2:** If the hide animation is hijacked (an other method calls hide on the same module), the callback will not be called.<br>
 **Note 3:** If the dom is not yet created, the hide method won't work. Wait for the `DOM_OBJECTS_CREATED` [notification](#notificationreceivednotification-payload-sender).
 
@@ -348,7 +371,7 @@ Possible configurable options:
 
 (*Introduced in version: 2.1.0.*)
 
-Visiblity locking helps the module system to prevent unwanted hide/show actions. The following scenario explains the concept:
+Visibility locking helps the module system to prevent unwanted hide/show actions. The following scenario explains the concept:
 
 **Module B asks module A to hide:**
 ````javascript
@@ -413,7 +436,7 @@ If no translation is found, a fallback will be used. The fallback sequence is as
 - 4. Translation as defined in core translation file of the fallback language (the first defined core translation file).
 - 5. The key (identifier) of the translation.
 
-When adding translations to your module, it's a good idea to see if an apropriate translation is already available in the [core translation files](https://github.com/MichMich/MagicMirror/tree/master/translations). This way, your module can benefit from the existing translations.
+When adding translations to your module, it's a good idea to see if an appropriate translation is already available in the [core translation files](https://github.com/MichMich/MagicMirror/tree/master/translations). This way, your module can benefit from the existing translations.
 
 **Example:**
 ````javascript
@@ -467,12 +490,12 @@ this.translate("RUNNING", {
 )}); // Will return a translated string for the identifier RUNNING, replacing `{timeUntilEnd}` with the contents of the variable `timeUntilEnd` in the order that translator intended. (has a fallback)
 ````
 
-**Example swedish .json file that does not have the variable in it:**
+**Example Swedish .json file that does not have the variable in it:**
 ````javascript
 {
 	"RUNNING": "Slutar",
 }
-
+````
 In this case the `translate`-function will not find any variables in the translation, will look for `fallback` variable and use that if possible to create the translation.
 
 ## The Node Helper: node_helper.js
@@ -552,6 +575,17 @@ This method is called when all node helpers are loaded and the system is ready t
 start: function() {
 	this.mySpecialProperty = "So much wow!";
 	Log.log(this.name + ' is started!');
+}
+````
+
+#### `stop()`
+This method is called when the MagicMirror server receives a `SIGINT` command and is shutting down. This method should include any commands needed to close any open connections, stop any sub-processes and gracefully exit the module.
+
+**Example:**
+````javascript
+stop: function() {
+	console.log("Shutting down MyModule");
+	this.connection.close();
 }
 ````
 
